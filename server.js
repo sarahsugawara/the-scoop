@@ -84,17 +84,14 @@ function updateComment(url, request) {
   const savedComment = database.comments[id];
   const requestComment = request.body && request.body.comment;
   const response = {};
-  if (!request.body) {
+  if (!requestComment) {
     response.status = 400;
     //not supplied a request body
+    //no comment was supplied to update the existing comment
   }
   else if (!savedComment) {
     response.status = 404;
     //no comment exists in database
-  }
-  else if (!requestComment) {
-    response.status = 400;
-    //no comment was supplied to update the existing comment
   }
   else {
     savedComment.body = requestComment.body || savedComment.body;
