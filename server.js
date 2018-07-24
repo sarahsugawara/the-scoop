@@ -109,15 +109,17 @@ function deleteComment(url, request) {
 
   if (savedComment) {
     database.comments[id] = null;
-    const relatedArticle = savedComment.articleId;
-    database.articles.forEach(article => {
-      if (article === relatedArticle) {
-        article.commentsIds.splice(commentIds.indexOf(id), 1);
-        let userComments = databse.users[article.username].commentIds;
-        userComments.splice(userComments.indexOf(id), 1);
+    const article = database.articles[savedComment.articleId];
+    const artComIds = article && article.commentIds;
+    if (artComIds) {
+        artComIds.splice(artComIds.indexOf(id), 1);
       }
-    });
-    response.status = 204;
+    const userComments = database.users[savedComment.username]
+    const userComIds = userComments && userComments.commentIds;
+    if (userComIds) {
+      userComIds.splice(userComIds.indexOf(id), 1);
+      response.status = 204;
+    }
   }
   else {
     response.status = 404;
