@@ -49,14 +49,13 @@ const routes = {
 };
 
 function createComment(url, request) {
-
   const response = {};
   const comment = request.body && request.body.comment;
   const body = comment && comment.body;
   const username = comment && comment.username;
   const articleNum = comment && comment.articleId;
   let commentId = database.nextCommentId++
-  if (comment && database.users[username] && database.articles[articleNum]) {
+  if (comment && body && database.users[username] && database.articles[articleNum]) {
     const newComment = {
       id: commentId,
       body: body,
@@ -83,8 +82,9 @@ function updateComment(url, request) {
   const id = Number(url.split('/').filter(segment => segment)[1]);
   const savedComment = database.comments[id];
   const requestComment = request.body && request.body.comment;
+  const commentBody = requestComment && requestComment.body;
   const response = {};
-  if (!requestComment) {
+  if (!requestComment  || !commentBody) {
     response.status = 400;
     //not supplied a request body
     //no comment was supplied to update the existing comment
