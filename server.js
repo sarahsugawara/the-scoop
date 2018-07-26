@@ -133,9 +133,9 @@ function upvoteComment(url, request) {
 
   console.log(`>>>>>>>> request.body is: ${pp(request.body)}`);
   const id = Number(url.split('/').filter(segment => segment)[1]);
-  const username = request.body && request.body.username;
-  const comment = database.comments[id];
   const body = request.body;
+  const username = body && body.username;
+  const comment = database.comments[id];
   const response = {};
 
   if (username !== database.users[username]) {
@@ -144,16 +144,15 @@ function upvoteComment(url, request) {
   else if (!comment) {
     response.status = 400;
   }
-  else if (!username) {
-    response.status = 400;
-  }
   else if (!body) {
     response.status = 400;
   }
-  else if (comment && database.user[username]) {
-    comment = upvote(comment, username);
-
-    response.body = {comment: comment.body};
+  else if (!username) {
+    response.status = 400;
+  }
+  else if (comment && database.users[username]) {
+    const upvotedComment = upvote(comment, database.users[username]);
+    response.body = upvotedComment.body;
     response.status = 200;
   }
   return response;
@@ -163,9 +162,9 @@ function downvoteComment(url, request) {
 
   console.log(`>>>>>>>> request.body is: ${pp(request.body)}`);
   const id = Number(url.split('/').filter(segment => segment)[1]);
-  const username = request.body && request.body.username;
-  const comment = database.comments[id];
   const body = request.body;
+  const username = body && body.username;
+  const comment = database.comments[id];
   const response = {};
 
   if (username !== database.users[username]) {
@@ -174,16 +173,15 @@ function downvoteComment(url, request) {
   else if (!comment) {
     response.status = 400;
   }
-  else if (!username) {
-    response.status = 400;
-  }
   else if (!body) {
     response.status = 400;
   }
-  else if (comment === database.comments[id] && username === database.user[username]) {
-    comment = downvote(comment, username);
-
-    response.body = {comment: comment.body};
+  else if (!username) {
+    response.status = 400;
+  }
+  else if (database.users[username] && comment) {
+    const downvotedComment = downvote(comment, database.users[username]);
+    response.body = downvotedComment.body;
     response.status = 200;
   }
   return response;
