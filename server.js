@@ -138,22 +138,15 @@ function upvoteComment(url, request) {
   const comment = database.comments[id];
   const response = {};
 
-  if (username !== database.users[username]) {
-    response.status = 400;
-  }
-  else if (!comment) {
-    response.status = 400;
-  }
-  else if (!body) {
-    response.status = 400;
-  }
-  else if (!username) {
-    response.status = 400;
-  }
-  else if (comment && database.users[username]) {
-    const upvotedComment = upvote(comment, database.users[username]);
-    response.body = upvotedComment.body;
+  if (comment && database.users[username]) {
+    const upvotedComment = upvote(comment, username);
+    response.body = {comment: upvotedComment};
     response.status = 200;
+    console.log(`>>>>>>>> got here to point A`);
+  }
+  else {
+    response.status = 400;
+    console.log(`>>>>>>>> got here to point B`);
   }
   return response;
 };
@@ -167,22 +160,16 @@ function downvoteComment(url, request) {
   const comment = database.comments[id];
   const response = {};
 
-  if (username !== database.users[username]) {
-    response.status = 400;
-  }
-  else if (!comment) {
-    response.status = 400;
-  }
-  else if (!body) {
-    response.status = 400;
-  }
-  else if (!username) {
-    response.status = 400;
-  }
-  else if (database.users[username] && comment) {
-    const downvotedComment = downvote(comment, database.users[username]);
-    response.body = downvotedComment.body;
+  if (database.users[username] && comment) {
+    const downvotedComment = downvote(comment, username);
+    response.body = {comment: downvotedComment};
     response.status = 200;
+    console.log(`>>>>>>>> got here to point A`);
+    console.log(`>>>>>>>> request.body is: ${pp(response)}`);
+  }
+  else {
+    response.status = 400;
+    console.log(`>>>>>>>> got here to point B`);
   }
   return response;
 };
